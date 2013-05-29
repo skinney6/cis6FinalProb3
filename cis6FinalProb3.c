@@ -10,7 +10,8 @@
 // Function Prototypes
 void displayMenu(void);
 void extractLargestDigit(void);
-int* isLargestDigit(int [], int [], int, int);
+int isLargestDigit(int [], int [], int, int);
+void displayNumWithLargest(int [], int, int [], int);
 void sort(int [], int);
 void printAry(int [], int);
 
@@ -46,23 +47,24 @@ void extractLargestDigit(void) {
   int inAry[MAX + 2] = {0};
   int largestArySize;
   int i, j;
-  int size;
+  int inputArySize;
+  int inArySize;
   int factor = 1;
   int in;
   
   // how many numbers are we working with (size of inputAry)
   printf("    How many ints to work on: ");
-  scanf("%d", &size);
+  scanf("%d", &inputArySize);
   
   // read numbers into inputAry
-  for (i = 0; i < size; i++) {
+  for (i = 0; i < inputArySize; i++) {
     printf("int %d\n", i + 1);
     scanf("%d", &inputAry[i]);
   }
 
   // store digits into largestAry 
   j = 1;
-  for (i = j - 1; i < size; i++) {
+  for (i = j - 1; i < inputArySize; i++) {
     factor = 1;
     while ((inputAry[i] / factor) != 0) {
       largestAry[j] = inputAry[i] / factor % 10;
@@ -74,28 +76,58 @@ void extractLargestDigit(void) {
   }
   
   largestArySize = j;
- 
-  printf(" size = %d\n", j);
-  printf("before sort\n");
-  printAry(largestAry, largestArySize);
   sort(largestAry, largestArySize);
-  printf("\nafter sort\n");
-  printAry(largestAry, largestArySize);
-
   largest = largestAry[1];
-
-  isLargestDigit(inputAry, inAry, largest, size);
-  
-  printf("\nin = %d\n", in);
+ 
   printf("\nThe largest digit: %d\n", largest);
 
+
+  inArySize = isLargestDigit(inputAry, inAry, largest, inputArySize);
+  
+  displayNumWithLargest(inputAry, inputArySize, inAry, inArySize);
+
+  putchar('\n');
+}
+
+void displayNumWithLargest(int inputAry[], int inputArySize, int inAry[], int inArySize) {
+  int i;
+  
+  for (i = 0; i < inArySize + 1; i++) {
+    if (inAry[i] == 1)
+      printf("Can be found in : %d\n", inputAry[i]);
+  }
+}
+
+int isLargestDigit(int inputAry[], int inAry[], int largest, int inputArySize) {
+  int i, j;
+  int temp;
+  int factor;
+  int inArySize = 0;
+
+  for (i = 0; i < inputArySize; i++) {
+    factor = 1;
+    while ((inputAry[i] / factor) != 0) {
+      temp = inputAry[i] / factor % 10;
+      if (temp < 0)
+	temp = -temp;
+      if (temp == largest) {
+	inAry[i] = 1;
+	inArySize++;
+	factor = 100000000;
+      }
+      else {
+	factor *= 10;
+      }
+    }
+  }
+  return inArySize;
 }
 
 void sort(int ary[], int n) {
   int a;
   int i, j;
   
-  // straight insertion 
+  // straight insertion sort (ignores index 0)
   for (j = 2; j < n; j++) {
     a = ary[j];
     i = j - 1;
@@ -106,35 +138,11 @@ void sort(int ary[], int n) {
     ary[i + 1] = a;
   }
 }
-
-int* isLargestDigit(int inputAry[], int inAry[], int largest, int size) {
-  int i;
-  int j;
-  int temp;
-  int factor = 1;
-  int in = 0;
-  int count = 0;
-
-  for (i = 0; i < size; i++) {
-    while ((inputAry[i] / factor % 10) != 0) {
-      if (inputAry[i] / factor % 10 == largest) {
-	inAry[i] = 1;
-	count++;
-      }
-      else {
-	factor *= 10;
-      }
-    }
-  }
   
-  printAry(inAry, count);
-  return inAry;
-}
-
 void printAry(int ary[], int size) {
   int i;
   
-  for (i = 1; i < size; i++)
+  for (i = 0; i < size; i++)
     printf(" %d ", ary[i]);
 }
 
